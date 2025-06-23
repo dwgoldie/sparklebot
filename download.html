@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Save Video to Photos Demo</title>
+  <style>
+    body { font-family: sans-serif; padding: 1em; }
+    video { max-width: 100%; height: auto; }
+    button { margin-top: 1em; padding: 0.5em 1em; font-size: 1em; }
+  </style>
+</head>
+<body>
+  <h1>Save Video to Photos</h1>
+  <p>Tap the button below to fetch the video and hand it off to iOS’s share sheet:</p>
+
+  <!-- 1) Preview the video -->
+<video id="videoPlayer" controls>
+  <!-- relative path -->
+  <source src="SB_025.mp4" type="video/mp4">
+  Your browser doesn’t support HTML5 video.
+</video>
+  <!-- 2) Trigger the Web Share hand-off -->
+<button id="saveVideo">Save to Photos</button>
+
+<script>
+document.getElementById('saveVideo').addEventListener('click', async () => {
+  try {
+    // Fetch the local file rather than from a remote host
+    const url = 'SB_025.mp4';
+    const resp = await fetch(url);
+    const blob = await resp.blob();
+    const file = new File([blob], 'SB_025.mp4', { type: blob.type });
+
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      await navigator.share({ files: [file] });
+    } else {
+      alert('Sorry—your browser does not support sharing files.');
+    }
+  } catch (err) {
+    console.error(err);
+    alert('Error fetching or sharing the video: ' + err.message);
+  }
+});
+</script>
+</body>
+</html>
